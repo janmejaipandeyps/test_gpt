@@ -35,10 +35,16 @@ function activate(context) {
       if (currentFile != "") {
         fs.readFile(currentFile, async (err, data) => {
 			const content = data.toString();
-			// const response = await createComplettion("write unit test cases in a single file using JEST and react-testing-library for \n" + content);
-			const response = await createComplettion("write only code for unit test cases in a single file using JUNIT, Jupiter with exception handling for \n" + content);
-			// const testFile = currentFile.replace(".js", ".test.js");
-			const testFile = currentFile.replace(".java", "Test.java");
+			let search = "";
+			let testFile = "";
+			if(currentFile.includes(".js")) {
+				search = "write only code for unit test cases in a single file using JEST and RTL for \n";
+				testFile = currentFile.replace(".js", ".test.js");
+			} else if(currentFile.includes(".ts")) {
+				search = "write only code for unit test cases in a single file using JEST for \n";
+				testFile = currentFile.replace(".ts", ".spec.ts");
+			}
+			const response = await createComplettion(search + content);
 			const code = response.data.choices[0].message.content;
 			fs.writeFile(testFile, code, (err) => {
 				if (err) console.log(err);

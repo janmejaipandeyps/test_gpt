@@ -13,12 +13,12 @@ const { Configuration, OpenAIApi } = require("openai");
 function activate(context) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "testgpt" is now active!');
+	console.log('Congratulations, your extension "startgpt" is now active!');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand("testgpt.start", async () => {
+	let disposable = vscode.commands.registerCommand("startgpt.start", async () => {
 		// The code you place here will be executed every time your command is executed
 
 		const gpt_use_case = await vscode.window.showQuickPick(
@@ -111,9 +111,12 @@ module.exports = {
 };
 
 async function createComplettion(prompt) {
+	const apiKey = vscode.workspace.getConfiguration('startgpt').get('apiKey');
+	const organizationId = vscode.workspace.getConfiguration('startgpt').get('organizationId');
+
 	const configuration = new Configuration({
-		organization: "org-5vVbXjuRH940d1Dgpxg1brNw",
-		apiKey: "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",
+		organization: organizationId,
+		apiKey: apiKey,
 	});
 
 	const openai = new OpenAIApi(configuration);

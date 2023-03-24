@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "testgpt.test",
-        "title": "Test GPT"
+        "command": "testgpt.start",
+        "title": "Start GPT"
       }
     ]
   },

@@ -54,19 +54,22 @@ function activate(context) {
 						testFile = currentFile.replace(".ts", ".spec.ts");
 					}
 
-					const response = await createComplettion(search + content);
-					const code = response.data.choices[0].message.content;
+					if (search !== "") {
+						const response = await createComplettion(search + content);
+						const code = response.data.choices[0].message.content;
 
-					fs.writeFile(testFile, code, (err) => {
-						if (err) {
-							console.log(err);
-							vscode.window.showInformationMessage("Test Cases Generation Failed");
-						}
-						else {
-							vscode.window.showInformationMessage("Test Cases Generated");
-						}
-					});
+						fs.writeFile(testFile, code, (err) => {
+							if (err) {
+								console.log(err);
+								vscode.window.showInformationMessage("Test Cases Generation Failed");
+							}
+							else {
+								vscode.window.showInformationMessage("Test Cases Generated");
+							}
+						});
+					}
 				});
+
 			}
 		} else {
 			vscode.window.showInformationMessage("Generating Report...");

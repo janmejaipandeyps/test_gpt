@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "testgpt.helloWorld",
-        "title": "Hello World"
+        "command": "testgpt.test",
+        "title": "Test GPT"
       }
     ]
   },

@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 const fs = require("fs");
 const vscode = require("vscode");
-const { Configuration, OpenAIApi } = require("openai");
+const { default: axios } = require("axios");
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -47,16 +47,16 @@ function activate(context) {
 					let testFile = "";
 
 					if (currentFile.includes(".js")) {
-						search = `write only code with imports and no junk for unit test cases of javascript in a single file using ${test_case_provider} for \n`;
+						search = `Write Code of unit test case using ${test_case_provider} for following: \n`;
 						testFile = currentFile.replace(".js", ".test.js");
 					} else if (currentFile.includes(".ts")) {
-						search = `write only code with imports and no junk for unit test cases of typescript in a single file using ${test_case_provider} for \n`;
+						search = `Write Code of unit test case using ${test_case_provider} for following: \n`;
 						testFile = currentFile.replace(".ts", ".spec.ts");
 					}
 
 					if (search !== "") {
 						const response = await createComplettion(search + content);
-						const code = response.data.choices[0].message.content;
+						const code = response.choices[0].message.content;
 
 						fs.writeFile(testFile, code, (err) => {
 							if (err) {
@@ -87,7 +87,7 @@ function activate(context) {
 					search = `${gpt_use_case} for the following code and generate report \n`;
 					testFile = currentFile + ".report.txt";
 					const response = await createComplettion(search + content);
-					const code = response.data.choices[0].message.content;
+					const code = response.choices[0].message.content;
 					fs.writeFile(testFile, code, (err) => {
 						if (err) {
 							console.log(err);
@@ -114,20 +114,12 @@ module.exports = {
 };
 
 async function createComplettion(prompt) {
-	const apiKey = vscode.workspace.getConfiguration('startgpt').get('apiKey');
-	const organizationId = vscode.workspace.getConfiguration('startgpt').get('organizationId');
+	const { data } = await axios.post('https://api.openai.com/v1/chat/completions', {"model": "gpt-4","messages": [{"role": "user", "content": prompt}],"temperature": 0.7}, {
+		headers: {
+		  'Content-Type': 'application/json',
+		  'Authorization': 'Bearer EnterHere'
+		}
+	})
 
-	const configuration = new Configuration({
-		organization: organizationId,
-		apiKey: apiKey,
-	});
-
-	const openai = new OpenAIApi(configuration);
-
-	const response = await openai.createChatCompletion({
-		model: "gpt-3.5-turbo",
-		messages: [{ role: "user", content: prompt }],
-	});
-
-	return response;
+	return data;
 }
